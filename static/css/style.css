@@ -1,0 +1,146 @@
+/* OCLO project page. Plain CSS, light and dark themes via prefers-color-scheme. */
+:root {
+  --bg: #ffffff;
+  --bg-alt: #f6f7f9;
+  --text: #1f2328;
+  --muted: #59636e;
+  --accent: #d6361f;           /* OCLO red, matches the paper's plot color family */
+  --btn-bg: #1f2328;
+  --btn-text: #ffffff;
+  --border: #d9dee3;
+  --good: #1f9d55;
+  --bad: #d64545;
+  --card: #ffffff;
+  --shadow: 0 1px 3px rgba(16, 24, 40, .08), 0 1px 2px rgba(16, 24, 40, .04);
+  --radius: 10px;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #111418;
+    --bg-alt: #171b20;
+    --text: #e6e8eb;
+    --muted: #a3acb6;
+    --accent: #ff6b52;
+    --btn-bg: #e6e8eb;
+    --btn-text: #111418;
+    --border: #2c333b;
+    --good: #3fbf73;
+    --bad: #ef6b6b;
+    --card: #1b2026;
+    --shadow: 0 1px 3px rgba(0, 0, 0, .5);
+  }
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Noto Sans", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: var(--accent); }
+img, video { display: block; max-width: 100%; }
+
+.container { max-width: 1100px; margin: 0 auto; padding-inline: 20px; }
+.container.narrow { max-width: 860px; }
+
+section { padding-block: 44px; }
+section.alt { background: var(--bg-alt); }
+h2 { font-size: 1.65rem; line-height: 1.25; margin: 0 0 14px; text-align: center; font-weight: 700; }
+h3 { font-size: 1.1rem; margin: 30px 0 12px; font-weight: 600; }
+.lead { max-width: 860px; margin: 0 auto 22px; color: var(--text); }
+.note { color: var(--muted); font-size: .9rem; margin: 10px 0 0; }
+.center { text-align: center; }
+
+/* ---------- header ---------- */
+.hero { padding-block: 48px 18px; text-align: center; }
+.title { font-size: clamp(1.5rem, 3.4vw, 2.4rem); line-height: 1.2; margin: 0 auto 14px; max-width: 980px; font-weight: 700; letter-spacing: -.01em; text-wrap: balance; }
+.nowrap { white-space: nowrap; }
+.acronym { font-size: clamp(1.05rem, 2vw, 1.35rem); margin: 0 0 16px; color: var(--text); }
+.acronym u { text-decoration-thickness: 1.5px; text-underline-offset: 3px; }
+.authors { font-size: 1.15rem; margin: 0 0 2px; }
+.venue { color: var(--muted); margin: 0 0 18px; }
+.links { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 8px 18px; border-radius: 999px;
+  background: var(--btn-bg); color: var(--btn-text);
+  text-decoration: none; font-weight: 500; font-size: .95rem;
+  transition: opacity .15s ease, transform .15s ease;
+}
+.btn:hover { opacity: .85; transform: translateY(-1px); }
+.btn.disabled { opacity: .45; cursor: not-allowed; transform: none; }
+
+/* ---------- teaser ---------- */
+.teaser { padding-block: 10px 36px; }
+.teaser-video { width: 100%; border-radius: var(--radius); box-shadow: var(--shadow); background: #000; aspect-ratio: 16 / 9; object-fit: cover; }
+.tldr { max-width: 860px; margin: 18px auto 0; text-align: center; font-size: 1.08rem; }
+
+.abstract { text-align: justify; hyphens: auto; }
+.full-video { width: 100%; max-width: 960px; margin: 0 auto; border-radius: var(--radius); box-shadow: var(--shadow); background: #000; aspect-ratio: 16 / 9; }
+
+/* ---------- figures and video grids ---------- */
+.figure { margin: 8px auto 0; background: #fff; border-radius: var(--radius); padding: 14px; box-shadow: var(--shadow); }
+.figure img { width: 100%; height: auto; }
+.figure figcaption { color: #59636e; font-size: .9rem; margin-top: 8px; text-align: center; }
+
+.grid { display: grid; gap: 18px; }
+.grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+.clip { margin: 0; position: relative; }
+.clip video { width: 100%; border-radius: 8px; background: #000; box-shadow: var(--shadow); }
+.clip figcaption { font-size: .9rem; color: var(--muted); margin-top: 8px; }
+.clip figcaption strong { color: var(--text); font-weight: 600; }
+.clip.wide { margin-top: 18px; }
+#method .grid-3 .clip video { aspect-ratio: 1 / 1; object-fit: cover; }
+#tasks .clip video, #robustness .clip video { aspect-ratio: 16 / 9; object-fit: cover; }
+#teleop .clip video { aspect-ratio: 1158 / 1080; object-fit: cover; }   /* cropped teleop clips are near-square */
+
+/* task tile header: name + speed badge */
+.tile-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin-top: 8px; }
+.tile-name { font-weight: 600; font-size: .95rem; }
+.speed { font-size: .75rem; font-weight: 600; padding: 1px 8px; border-radius: 999px; border: 1px solid var(--border); color: var(--muted); white-space: nowrap; }
+.tile-desc { font-size: .85rem; color: var(--muted); margin: 2px 0 0; }
+
+/* ---------- robustness pairs ---------- */
+.pair { margin-bottom: 8px; }
+.pair h3 { margin-top: 20px; }
+.clip.good video { outline: 4px solid var(--good); outline-offset: -4px; }
+.clip.bad video { outline: 4px solid var(--bad); outline-offset: -4px; }
+.tag {
+  position: absolute; top: 10px; left: 10px; z-index: 2;
+  font-size: .8rem; font-weight: 700; padding: 3px 10px; border-radius: 999px; color: #fff;
+}
+.tag.good { background: var(--good); }
+.tag.bad { background: var(--bad); }
+
+.table-wrap { overflow-x: auto; }
+table.results { border-collapse: collapse; margin: 0 auto; font-size: .92rem; min-width: 640px; }
+table.results th, table.results td { padding: 7px 12px; text-align: center; border-bottom: 1px solid var(--border); white-space: nowrap; }
+table.results th { font-weight: 600; }
+table.results tr.sub th { font-weight: 400; color: var(--muted); font-size: .8rem; padding-top: 0; }
+table.results td:first-child, table.results th:first-child { text-align: left; }
+table.results tr.ours td { font-weight: 700; }
+
+footer { padding-block: 26px; text-align: center; color: var(--muted); font-size: .85rem; border-top: 1px solid var(--border); }
+footer p { margin: 0; }
+
+/* ---------- responsive ---------- */
+@media (max-width: 900px) {
+  .grid-3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 640px) {
+  section { padding-block: 32px; }
+  .grid-2, .grid-3 { grid-template-columns: 1fr; }
+  .abstract { text-align: left; }
+  h2 { font-size: 1.4rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .btn { transition: none; }
+}

@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dataset-Free Compliant Humanoid Robot Loco-Manipulation with Dynamic Online Posture</title>
+  <meta name="description" content="OCLO is a humanoid loco-manipulation system trained without human motion data and commanded only through two end-effector targets, with pelvis height and torso orientation generated online.">
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤖</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <link rel="stylesheet" href="static/css/style.css">
+</head>
+<body>
+
+<header class="hero">
+  <div class="container">
+    <h1 class="title"><span class="nowrap">Dataset-Free</span> Compliant Humanoid Robot <span class="nowrap">Loco-Manipulation</span> with Dynamic Online Posture</h1>
+    <p class="acronym">OCLO &mdash; <span class="nowrap"><u>O</u>nline-posture</span> <u>C</u>ompliant <span class="nowrap"><u>LO</u>co-manipulation</span></p>
+    <!-- AUTHORS: anonymous for review. For the public version replace this block. -->
+    <p class="authors">Anonymous Authors</p>
+    <p class="venue">Under review</p>
+    <nav class="links" aria-label="Paper links">
+      <span class="btn disabled" aria-disabled="true" title="The paper will be linked here once it is public"><i class="fa-solid fa-file-lines"></i><span>arXiv (coming soon)</span></span>
+      <a class="btn" href="#video"><i class="fa-solid fa-film"></i><span>Video</span></a>
+      <span class="btn disabled" aria-disabled="true" title="Code will be released after the review period"><i class="fa-brands fa-github"></i><span>Code (coming soon)</span></span>
+    </nav>
+  </div>
+</header>
+
+<section class="teaser">
+  <div class="container">
+    <video class="teaser-video" src="static/videos/hero_montage.mp4" poster="static/images/posters/hero_montage.jpg"
+           autoplay muted loop playsinline preload="auto" aria-label="Montage of OCLO performing nine loco-manipulation tasks on a Unitree G1"></video>
+    <p class="tldr"><strong>OCLO</strong> drives a Unitree G1 from <strong>two hand targets and nothing else</strong>. It is trained with no human motion data, generates its own pelvis height and torso orientation online, and yields to forces on its hands instead of falling over.</p>
+  </div>
+</section>
+
+<section id="abstract">
+  <div class="container narrow">
+    <h2>Abstract</h2>
+    <p class="abstract">Most humanoid loco-manipulation controllers require human motion data to learn whole-body coordination and posture, leaving policies reliant on external sources to provide this data. We present <strong>OCLO (Online-posture Compliant LOco-manipulation)</strong>, a humanoid loco-manipulation system trained without human motion data and commanded only through two end-effector targets. Because these targets do not uniquely determine whole-body posture, OCLO generates pelvis height and torso orientation online using an analytic reachability prior, further refined through policy-in-the-loop sampling with a task-agnostic cost. OCLO also learns whole-body compliance by displacing end-effector references according to measured forces through a spring-damper model, encouraging the legs, waist, and pelvis to yield to external loads. In simulation, using the reachability prior leads to a 77.8% success rate in acquiring the commanded reference, a vast improvement over the 37.8% success rate accomplished without the prior. Further, refinement reduces end-effector orientation error across all evaluated tasks. The same posture module improves a pretrained SONIC controller on four of five tasks. Without compliance training, policies tend to lose balance under disturbances rather than sacrifice tracking. On a Unitree G1, OCLO maintains balance under end-effector disturbances that cause its ablations to fail and performs seven loco-manipulation tasks, including crouched walking and picking up a box from a low surface.</p>
+  </div>
+</section>
+
+<section id="video" class="alt">
+  <div class="container">
+    <h2>Overview video</h2>
+    <video class="full-video" src="static/videos/oclo_video.mp4" poster="static/images/posters/oclo_video.jpg"
+           controls playsinline preload="metadata" data-no-autoplay></video>
+  </div>
+</section>
+
+<section id="method">
+  <div class="container">
+    <h2>Trained without human motion data</h2>
+    <p class="lead">A lower-body policy is trained with PPO through a three-stage curriculum in which every command is sampled procedurally: velocity commands first, then end-effector targets with interaction forces, then pelvis-height and torso commands. No motion capture, retargeted motion, or demonstrations are used. At deployment the two hand targets pass through a spring&ndash;damper reference model, an online posture module chooses pelvis height and torso orientation, differential IK resolves the arms, and the frozen policy drives the legs and waist.</p>
+    <figure class="figure">
+      <img src="static/images/fig2_pipeline.png" alt="OCLO training curriculum (stand and walk; load and reach; crouch and lean) and deployment pipeline (spring-damper reference model, online posture module with analytic prior and CEM refinement, differential IK and frozen lower-body policy)." loading="lazy">
+      <figcaption>(a) Three-stage training curriculum. (b) Deployment: two end-effector targets in, pelvis height and torso orientation generated online.</figcaption>
+    </figure>
+
+    <h3>Training curriculum in simulation</h3>
+    <div class="grid grid-3">
+      <figure class="clip">
+        <video data-src="static/videos/stage1.mp4" poster="static/images/posters/stage1.jpg" muted loop playsinline preload="none"></video>
+        <figcaption><strong>Stage 1: stand and walk.</strong> Velocity and yaw-rate commands with the arms parked.</figcaption>
+      </figure>
+      <figure class="clip">
+        <video data-src="static/videos/stage2.mp4" poster="static/images/posters/stage2.jpg" muted loop playsinline preload="none"></video>
+        <figcaption><strong>Stage 2: load and reach.</strong> Sampled end-effector targets and interaction forces through the spring&ndash;damper reference.</figcaption>
+      </figure>
+      <figure class="clip">
+        <video data-src="static/videos/stage3.mp4" poster="static/images/posters/stage3.jpg" muted loop playsinline preload="none"></video>
+        <figcaption><strong>Stage 3: crouch and lean.</strong> Pelvis-height and torso-orientation commands, including crouch-walking under load.</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section id="posture" class="alt">
+  <div class="container">
+    <h2>Posture generated online from two hand targets</h2>
+    <p class="lead">Two hand targets do not determine how low the pelvis should sit or how far the torso should lean. OCLO computes that posture itself. An <strong>analytic reachability prior</strong> maps the targets to pelvis height and torso pitch in closed form (0.07&nbsp;ms on a CPU), and an optional <strong>policy-in-the-loop CEM refinement</strong> rolls the frozen policy forward under 64 candidate postures and keeps the one with the lowest effort, compliance, and stability cost. The cost contains no task term.</p>
+    <div class="grid grid-2">
+      <figure class="clip">
+        <video data-src="static/videos/deploy_prior.mp4" poster="static/images/posters/deploy_prior.jpg" muted loop playsinline preload="none"></video>
+        <figcaption><strong>OCLO (Prior).</strong> The closed-form prior alone, as used for the real-robot tasks.</figcaption>
+      </figure>
+      <figure class="clip">
+        <video data-src="static/videos/deploy_prior_cem.mp4" poster="static/images/posters/deploy_prior_cem.jpg" muted loop playsinline preload="none"></video>
+        <figcaption><strong>OCLO (Prior + CEM).</strong> The prior refined online by policy-in-the-loop sampling, which lowers end-effector orientation error.</figcaption>
+      </figure>
+    </div>
+    <figure class="clip wide">
+      <video data-src="static/videos/deploy_prior_cem_candidates.mp4" poster="static/images/posters/deploy_prior_cem_candidates.jpg" muted loop playsinline preload="none"></video>
+      <figcaption><strong>CEM candidates.</strong> The candidate postures evaluated at each replan, each rolled out with the frozen policy and colored by its rollout cost.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="tasks">
+  <div class="container">
+    <h2>Compliant loco-manipulation from two hand controllers</h2>
+    <p class="lead">Real-robot tasks on a Unitree G1 with OCLO (Prior), teleoperated through two hand controllers with no posture command. When the hands press on a surface or pull on a cart, the end-effector references yield to the measured contact force and the legs, waist, and pelvis are trained to absorb it, so the robot can wipe, push, and pull without fighting the contact.</p>
+    <div class="grid grid-3" id="task-grid"><!-- filled by static/js/main.js from TASKS --></div>
+  </div>
+</section>
+
+<section id="robustness" class="alt">
+  <div class="container">
+    <h2>Force-conditioned training keeps it upright when the arms are disturbed</h2>
+    <p class="lead">External forces are applied to the torso and through the end effectors while the robot holds a posture. Two ablations isolate the training signals. B1 is trained without end-effector target pose and force sampling, and B2 with target pose sampling but without force sampling. Both handle torso disturbances but fall when the force enters through the arms. OCLO keeps its balance and recovers.</p>
+
+    <div class="pair-list">
+      <div class="pair">
+        <h3>Frontal pull through the end effector</h3>
+        <div class="grid grid-2">
+          <figure class="clip good">
+            <span class="tag good"><i class="fa-solid fa-check"></i> OCLO</span>
+            <video data-src="static/videos/pull_succ.mp4" poster="static/images/posters/pull_succ.jpg" muted loop playsinline preload="none"></video>
+          </figure>
+          <figure class="clip bad">
+            <span class="tag bad"><i class="fa-solid fa-xmark"></i> Ablation</span>
+            <video data-src="static/videos/pull_fail.mp4" poster="static/images/posters/pull_fail.jpg" muted loop playsinline preload="none"></video>
+          </figure>
+        </div>
+      </div>
+      <div class="pair">
+        <h3>Frontal push through the end effector</h3>
+        <div class="grid grid-2">
+          <figure class="clip good">
+            <span class="tag good"><i class="fa-solid fa-check"></i> OCLO</span>
+            <video data-src="static/videos/push_succ.mp4" poster="static/images/posters/push_succ.jpg" muted loop playsinline preload="none"></video>
+          </figure>
+          <figure class="clip bad">
+            <span class="tag bad"><i class="fa-solid fa-xmark"></i> Ablation</span>
+            <video data-src="static/videos/push_fail.mp4" poster="static/images/posters/push_fail.jpg" muted loop playsinline preload="none"></video>
+          </figure>
+        </div>
+      </div>
+      <div class="pair">
+        <h3>Lateral pull on one hand, arms held wide</h3>
+        <div class="grid grid-2">
+          <figure class="clip good">
+            <span class="tag good"><i class="fa-solid fa-check"></i> OCLO</span>
+            <video data-src="static/videos/lateral_succ.mp4" poster="static/images/posters/lateral_succ.jpg" muted loop playsinline preload="none"></video>
+          </figure>
+          <figure class="clip bad">
+            <span class="tag bad"><i class="fa-solid fa-xmark"></i> Ablation</span>
+            <video data-src="static/videos/lateral_fail.mp4" poster="static/images/posters/lateral_fail.jpg" muted loop playsinline preload="none"></video>
+          </figure>
+        </div>
+      </div>
+      <p class="note">Ablation: a policy trained without end-effector force sampling, with or without end-effector target pose sampling.</p>
+    </div>
+
+    <h3>Successful trials out of ten</h3>
+    <div class="table-wrap">
+      <table class="results">
+        <thead>
+          <tr><th rowspan="2">Method</th><th>Torso pull</th><th>Torso push</th><th colspan="2">EE pull</th><th>EE push</th><th>Lateral pull</th></tr>
+          <tr class="sub"><th>40&ndash;60 N</th><th></th><th>20&ndash;40 N</th><th>50&ndash;70 N</th><th></th><th>40&ndash;60 N</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>B1: no EE targets, no EE forces</td><td>8/10</td><td>7/10</td><td>1/10</td><td>&ndash;</td><td>0/10</td><td>0/10</td></tr>
+          <tr><td>B2: EE targets, no EE forces</td><td>8/10</td><td>8/10</td><td>5/10</td><td>&ndash;</td><td>3/10</td><td>2/10</td></tr>
+          <tr class="ours"><td>OCLO (Prior)</td><td>10/10</td><td>9/10</td><td>10/10</td><td>10/10</td><td>9/10</td><td>8/10</td></tr>
+          <tr><td>OCLO (Prior + CEM)</td><td>9/10</td><td>9/10</td><td>9/10</td><td>&ndash;</td><td>8/10</td><td>8/10</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note">Pulls applied through an inline force gauge at the stated range. Pushes applied manually, the EE push through a PVC pipe. B1, B2, and OCLO (Prior) hold the same commanded posture, while OCLO (Prior + CEM) refines it online. A dash marks an untested condition.</p>
+  </div>
+</section>
+
+<section id="teleop">
+  <div class="container">
+    <h2>Two-point teleoperation</h2>
+    <p class="lead">The operator holds two hand controllers. Only their poses and one clutch button per hand reach the robot: no head pose, no chest or hip tracker, no exoskeleton. Pelvis height and torso orientation follow from the hand targets.</p>
+    <div class="grid grid-3">
+      <figure class="clip"><video data-src="static/videos/teleop_1.mp4" poster="static/images/posters/teleop_1.jpg" muted loop playsinline preload="none"></video></figure>
+      <figure class="clip"><video data-src="static/videos/teleop_2.mp4" poster="static/images/posters/teleop_2.jpg" muted loop playsinline preload="none"></video></figure>
+      <figure class="clip"><video data-src="static/videos/teleop_3.mp4" poster="static/images/posters/teleop_3.jpg" muted loop playsinline preload="none"></video></figure>
+    </div>
+  </div>
+</section>
+
+<section id="citation" class="alt">
+  <div class="container narrow">
+    <h2>Citation</h2>
+    <p class="note center">A citation will be available after the review period.</p>
+  </div>
+</section>
+
+<footer>
+  <div class="container narrow">
+    <p>Page layout inspired by the <a href="https://github.com/nerfies/nerfies.github.io" target="_blank" rel="noopener">Nerfies</a> project page.</p>
+  </div>
+</footer>
+
+<script src="static/js/main.js"></script>
+</body>
+</html>
