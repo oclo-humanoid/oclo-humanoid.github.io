@@ -1,0 +1,5 @@
+__pycache__/
+*.pyc
+
+# raw source video (encoded copy lives in static/videos/oclo_video.mp4)
+/oclo_final_video.mp4
